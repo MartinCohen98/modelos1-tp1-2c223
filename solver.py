@@ -1,3 +1,5 @@
+import math
+
 
 class Sucursal:
 
@@ -29,6 +31,10 @@ class Sucursal:
         return self.numero
     
 
+def distanciaSucursales(sucursal1: Sucursal, sucursal2: Sucursal):
+    return math.sqrt((sucursal1.getX() - sucursal2.getX()) ** 2 + (sucursal1.getY() - sucursal2.getY()) ** 2)
+    
+
 class Modelo:
 
     sucursales = {}
@@ -49,43 +55,118 @@ class Modelo:
 
     def getCantidadSucursales(self) -> int:
         return len(self.sucursales)
+
+    def getCapacidadMaxima(self) -> int:
+        return self.capacidadMaxima
     
     def getSucursal(self, numero) -> Sucursal:
         return self.sucursales[numero]
+    
+    def getSucursales(self) -> list[Sucursal]:
+        return list(self.sucursales.values())
 
     def printSucursal(self, numero):
         sucursal = self.sucursales[numero]
         print(str(numero) + ": Demanda: " + str(sucursal.getDemanda()) + " Coordinadas: " + str(sucursal.getX()) + ", " + str(sucursal.getY()))
 
 
+
+
+
+
 class SolucionTrivial:
 
     modeloOrdenado = []
-    modelo = None
 
     def __init__(self, modelo: Modelo) -> None:
         
-        dinero = 0
+        saldo = 0
 
         for i in range(0, modelo.getCantidadSucursales()):
             sucursal = modelo.getSucursal(i + 1)
 
-            dinero = dinero + sucursal.getDemanda()
+            saldo = saldo + sucursal.getDemanda()
 
-            if(dinero < 0):
-                print("Modelo trivial imposible.")
+            if(saldo < 0) or saldo > modelo.getCapacidadMaxima():
+                print("Solucion trivial imposible.")
                 return
             
             self.modeloOrdenado.append(sucursal.getNumero())
 
-
+    def getModeloOrdenado(self) -> list[int]:
+        return self.modeloOrdenado
+    
     def imprimirSolucion(self) -> str:
+
         texto = ""
+
+        if not self.modeloOrdenado:
+            return texto
+        
         for numero in self.modeloOrdenado:
             texto = texto + str(numero) + ' '
         
 
         return texto[:-1]
+    
+
+class SolucionGreedy:
+
+    modeloOrdenado = []
+
+    def __init__(self, modelo: Modelo) -> None:
+        
+        saldo = 0
+        sucursales = modelo.getSucursales()
+
+        sucursalActual = None
+
+        i = 0
+
+        while sucursalActual is None:
+            unaSucursal = sucursales[i]
+            if unaSucursal.getDemanda() > 0:
+                sucursalActual = unaSucursal
+            i = i + 1
+        
+        self.modeloOrdenado.append(sucursalActual.getNumero())
+        sucursales.remove(sucursalActual)
+        saldo = sucursalActual.getDemanda()
+
+        while sucursales:
+            distanciaMinima = None
+            proximaSucursal = None
+            for sucursal in sucursales:
+                distancia = distanciaSucursales(sucursalActual, sucursal)
+                nuevoSaldo = saldo + sucursal.getDemanda()
+
+                if((nuevoSaldo >= 0) and (nuevoSaldo <= modelo.getCapacidadMaxima()) and
+                   ((distanciaMinima is None) or (distanciaMinima > distancia))):
+                    distanciaMinima = distancia
+                    proximaSucursal = sucursal
+            
+            self.modeloOrdenado.append(proximaSucursal.getNumero())
+            sucursales.remove(proximaSucursal)
+            sucursalActual = proximaSucursal
+            saldo = saldo + sucursalActual.getDemanda()
+
+    def getModeloOrdenado(self) -> list[int]:
+        return self.modeloOrdenado
+    
+    def imprimirSolucion(self) -> str:
+
+        texto = ""
+
+        if not self.modeloOrdenado:
+            return texto
+        
+        for numero in self.modeloOrdenado:
+            texto = texto + str(numero) + ' '
+        
+
+        return texto[:-1]
+        
+
 
 
 f = open("primer_problema.txt", "r")
@@ -117,6 +198,10 @@ for i in range(0, dimension):
     coordenada = f.readline().split(' ')
     modelo.agregarCoordenadasSucursal(int(coordenada[0]), float(coordenada[1]), float(coordenada[2]))
 
-solucionTrivial = SolucionTrivial(modelo)
+f.close()
 
-print(solucionTrivial.imprimirSolucion())
+solucionTrivial = SolucionTrivial(modelo)
+solucionGreedy = SolucionGreedy(modelo)
+
+f = open("entrega_primer_problema.txt", "w")
+f.write(solucionGreedy.imprimirSolucion())
