@@ -285,24 +285,37 @@ class SolucionOptimizador():
         modeloRecorido = modeloOrdenado.copy()
         self.modeloOrdenado = modeloOrdenado.copy()
 
-        for numeroSucursalReordenando in modeloRecorido:
-            
-            self.modeloOrdenado.remove(numeroSucursalReordenando)
-            sucursal = modelo.getSucursal(numeroSucursalReordenando)
-            aumentoDistanciaMinima = None
-            sucursalAnterior = None
-            proximaSucursal = None
-            nuevaPocision = None
-            i = 0
+        for j in range(0,10):
 
-            for numeroSucursal in self.modeloOrdenado:
+            for numeroSucursalReordenando in modeloRecorido:
 
-                proximaSucursal = modelo.getSucursal(numeroSucursal)
+                self.modeloOrdenado.remove(numeroSucursalReordenando)
+                sucursal = modelo.getSucursal(numeroSucursalReordenando)
+                aumentoDistanciaMinima = None
+                sucursalAnterior = None
+                proximaSucursal = None
+                nuevaPocision = None
+                i = 0
 
-                if i == 0:
-                    aumentoDistancia = distanciaSucursales(sucursal, proximaSucursal)
-                else:
-                    aumentoDistancia = distanciaSucursales(sucursalAnterior, sucursal) + distanciaSucursales(sucursal, proximaSucursal)
+                for numeroSucursal in self.modeloOrdenado:
+
+                    proximaSucursal = modelo.getSucursal(numeroSucursal)
+
+                    if i == 0:
+                        aumentoDistancia = distanciaSucursales(sucursal, proximaSucursal)
+                    else:
+                        aumentoDistancia = distanciaSucursales(sucursalAnterior, sucursal) + distanciaSucursales(sucursal, proximaSucursal)
+
+                    if (aumentoDistanciaMinima == None) or (aumentoDistancia < aumentoDistanciaMinima):
+
+                        if(self.esPosibleIncluir(modelo, i, sucursal)):
+                            aumentoDistanciaMinima = aumentoDistancia
+                            nuevaPocision = i
+
+                    sucursalAnterior = proximaSucursal
+                    i = i + 1
+
+                aumentoDistancia = distanciaSucursales(sucursalAnterior, sucursal)
 
                 if (aumentoDistanciaMinima == None) or (aumentoDistancia < aumentoDistanciaMinima):
 
@@ -310,20 +323,9 @@ class SolucionOptimizador():
                         aumentoDistanciaMinima = aumentoDistancia
                         nuevaPocision = i
 
-                sucursalAnterior = proximaSucursal
-                i = i + 1
-
-            aumentoDistancia = distanciaSucursales(sucursalAnterior, sucursal)
-
-            if (aumentoDistanciaMinima == None) or (aumentoDistancia < aumentoDistanciaMinima):
-
-                if(self.esPosibleIncluir(modelo, i, sucursal)):
-                    aumentoDistanciaMinima = aumentoDistancia
-                    nuevaPocision = i
-
-            if nuevaPocision is not None:
-                self.modeloOrdenado.insert(nuevaPocision, sucursal.getNumero())
-                print("Insertada la sucursal: " + str(sucursal.getNumero()) + " de " + str(len(self.modeloOrdenado)))
+                if nuevaPocision is not None:
+                    self.modeloOrdenado.insert(nuevaPocision, sucursal.getNumero())
+                    print("Insertada la sucursal: " + str(sucursal.getNumero()) + " de " + str(len(self.modeloOrdenado)))
 
     def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal) -> bool:
         
