@@ -412,4 +412,4 @@ solucionOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenad
 print(solucionOptimizada.getModeloOrdenado())
 
 f = open("entrega_primer_problema.txt", "w")
-f.write(solucionSearch.imprimirSolucion())
+f.write(solucionOptimizada.imprimirSolucion())
