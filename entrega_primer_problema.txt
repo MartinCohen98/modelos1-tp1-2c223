@@ -1,6 +1,6 @@
 Impresion del problema:
 
-El problema parece ser simple y no parece ser excesivamente complejo de resolver. Al ser la primera entrega no estoy seguro de que tan dificil va a ser.
+El problema es facil de entender y no parece ser excesivamente complejo de resolver. Al ser la primera entrega no estoy seguro de que tan dificil va a ser.
 
 
 
@@ -30,4 +30,12 @@ Comentarios en entregas:
 
 - Arreglada la logica de la solucion search, no parece haber mejorado mucho la solucion. Me doy cuenta que tome comos supuesto que es indistinto por donde comienzo el recorrido.
 
-- Agrego a la solucion greedy que arranque por el origen para probar si mejora el score. Parece seguir siendo la mejor solucion.
+- Agrego a la solucion que arranque por el origen para probar si mejora el score. La solucion greedy optimizada sigue siendo la mejor solucion.
+
+
+
+Comentarios finales de la entrega:
+
+El problema resulto ser un poco mas complejo de resolver de lo que esperaba. Tambien me di cuenta que habia tomado un supuesto al principio de la solucion sin darme cuenta.
+Tengo la sensacion de que la solucion a la que yo llegue es cercana al optimo pero no es optima. Tampoco se me ocurre una forma de algoritmicamente llegar a ese optimo. 
+Es posible que investigando un poco mas sobre heuristicas me acerque mas a la solucion real.

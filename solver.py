@@ -72,16 +72,12 @@ class Modelo:
 
 def scoreSolucion(modelo: Modelo, ordenado: list[int]) -> float:
     distancia = 0
-    sucursalAnterior = None
+    sucursalAnterior = Sucursal(0)
+    sucursalAnterior.setCoordenadas(0,0)
 
     for numero in ordenado:
         sucursal = modelo.getSucursal(numero)
-        if sucursalAnterior:
-            distancia = distancia + distanciaSucursales(sucursal, sucursalAnterior)
-        else:
-            origen = Sucursal(0)
-            origen.setCoordenadas(0,0)
-            distancia = distanciaSucursales(sucursal, origen)
+        distancia = distancia + distanciaSucursales(sucursal, sucursalAnterior)
 
         sucursalAnterior = sucursal
     
@@ -90,13 +86,13 @@ def scoreSolucion(modelo: Modelo, ordenado: list[int]) -> float:
 def scoreSolucionPrint(modelo: Modelo, ordenado: list[int], nombre: str) -> float:
     saldo = 0
     distancia = 0
-    sucursalAnterior = None
+    sucursalAnterior = Sucursal(0)
+    sucursalAnterior.setCoordenadas(0,0)
 
     for numero in ordenado:
         sucursal = modelo.getSucursal(numero)
         saldo = saldo + sucursal.getDemanda()
-        if sucursalAnterior:
-            distancia = distancia + distanciaSucursales(sucursal, sucursalAnterior)
+        distancia = distancia + distanciaSucursales(sucursal, sucursalAnterior)
 
         if(saldo < 0) or saldo > modelo.getCapacidadMaxima():
             print("Solucion " + nombre + " imposible.")
@@ -317,7 +313,6 @@ class SolucionOptimizador():
                 
                 if(nuevoModeloOrdenado):
                     self.modeloOrdenado = nuevoModeloOrdenado.copy()
-                    print("Se reubica la sucursal " + str(sucursal.getNumero()))
                     reordenamiento = True
 
             modeloRecorido = self.modeloOrdenado.copy()
@@ -403,9 +398,13 @@ for i in range(0, dimension):
 f.close()
 
 # solucionTrivial = SolucionTrivial(modelo)
+print("Resolviendo solucion greedy")
 solucionGreedy = SolucionGreedy(modelo)
+print("Resolviendo solucion search")
 solucionSearch = SolucionSearch(modelo)
+print("Optimizando solucion greedy")
 solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+print("Optimizando solucion search")
 solucionSearchOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenado())
 
 scoreSolucionPrint(modelo, solucionGreedy.getModeloOrdenado(), "greedy")
