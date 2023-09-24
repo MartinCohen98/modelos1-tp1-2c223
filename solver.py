@@ -70,6 +70,42 @@ class Modelo:
         print(str(numero) + ": Demanda: " + str(sucursal.getDemanda()) + " Coordinadas: " + str(sucursal.getX()) + ", " + str(sucursal.getY()))
 
 
+def scoreSolucion(modelo: Modelo, ordenado: list[int]) -> float:
+    distancia = 0
+    sucursalAnterior = None
+
+    for numero in ordenado:
+        sucursal = modelo.getSucursal(numero)
+        if sucursalAnterior:
+            distancia = distancia + distanciaSucursales(sucursal, sucursalAnterior)
+        else:
+            origen = Sucursal(0)
+            origen.setCoordenadas(0,0)
+            distancia = distanciaSucursales(sucursal, origen)
+
+        sucursalAnterior = sucursal
+    
+    return distancia
+
+def scoreSolucionPrint(modelo: Modelo, ordenado: list[int], nombre: str) -> float:
+    saldo = 0
+    distancia = 0
+    sucursalAnterior = None
+
+    for numero in ordenado:
+        sucursal = modelo.getSucursal(numero)
+        saldo = saldo + sucursal.getDemanda()
+        if sucursalAnterior:
+            distancia = distancia + distanciaSucursales(sucursal, sucursalAnterior)
+
+        if(saldo < 0) or saldo > modelo.getCapacidadMaxima():
+            print("Solucion " + nombre + " imposible.")
+
+        sucursalAnterior = sucursal
+
+    print("Score solcion " + nombre + ": " + str(distancia))
+    
+    return distancia
 
 
 
@@ -228,7 +264,6 @@ class SolucionSearch:
                 if nuevaPocision is not None:
                     self.modeloOrdenado.insert(nuevaPocision, sucursal.getNumero())
                     sucursales.remove(sucursal)
-                    print("Insertada la sucursal: " + str(sucursal.getNumero()) + " de " + str(len(self.modeloOrdenado)))
 
     def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal) -> bool:
         
@@ -284,12 +319,17 @@ class SolucionOptimizador():
 
         modeloRecorido = modeloOrdenado.copy()
         self.modeloOrdenado = modeloOrdenado.copy()
+        copiaModeloOrdenado = modeloOrdenado.copy()
 
-        for j in range(0,10):
+        reordenamiento = True
+
+        while reordenamiento:
+
+            reordenamiento = False
 
             for numeroSucursalReordenando in modeloRecorido:
 
-                self.modeloOrdenado.remove(numeroSucursalReordenando)
+                copiaModeloOrdenado.remove(numeroSucursalReordenando)
                 sucursal = modelo.getSucursal(numeroSucursalReordenando)
                 aumentoDistanciaMinima = None
                 sucursalAnterior = None
@@ -297,7 +337,7 @@ class SolucionOptimizador():
                 nuevaPocision = None
                 i = 0
 
-                for numeroSucursal in self.modeloOrdenado:
+                for numeroSucursal in copiaModeloOrdenado:
 
                     proximaSucursal = modelo.getSucursal(numeroSucursal)
 
@@ -308,7 +348,7 @@ class SolucionOptimizador():
 
                     if (aumentoDistanciaMinima == None) or (aumentoDistancia < aumentoDistanciaMinima):
 
-                        if(self.esPosibleIncluir(modelo, i, sucursal)):
+                        if(self.esPosibleIncluir(modelo, i, sucursal, copiaModeloOrdenado)):
                             aumentoDistanciaMinima = aumentoDistancia
                             nuevaPocision = i
 
@@ -319,21 +359,27 @@ class SolucionOptimizador():
 
                 if (aumentoDistanciaMinima == None) or (aumentoDistancia < aumentoDistanciaMinima):
 
-                    if(self.esPosibleIncluir(modelo, i, sucursal)):
+                    if(self.esPosibleIncluir(modelo, i, sucursal, copiaModeloOrdenado)):
                         aumentoDistanciaMinima = aumentoDistancia
                         nuevaPocision = i
 
                 if nuevaPocision is not None:
-                    self.modeloOrdenado.insert(nuevaPocision, sucursal.getNumero())
-                    print("Insertada la sucursal: " + str(sucursal.getNumero()) + " de " + str(len(self.modeloOrdenado)))
+                    copiaModeloOrdenado.insert(nuevaPocision, sucursal.getNumero())
+                
+                    if(scoreSolucion(modelo, copiaModeloOrdenado) < scoreSolucion(modelo, self.modeloOrdenado)):
+                        self.modeloOrdenado = copiaModeloOrdenado.copy()
+                        print("Se reubica la sucursal " + str(sucursal.getNumero()))
+                        reordenamiento = True
 
-    def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal) -> bool:
+                copiaModeloOrdenado = self.modeloOrdenado.copy()
+
+    def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal, orden: list[int]) -> bool:
         
         i = 0
         saldo = 0
         esPosible = True
 
-        for numeroSucursal in self.modeloOrdenado:
+        for numeroSucursal in orden:
             sucursal = modelo.getSucursal(numeroSucursal)
 
             if i == posicion:
@@ -409,9 +455,13 @@ f.close()
 # solucionTrivial = SolucionTrivial(modelo)
 solucionGreedy = SolucionGreedy(modelo)
 solucionSearch = SolucionSearch(modelo)
-solucionOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+solucionSearchOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenado())
 
-print(solucionOptimizada.getModeloOrdenado())
+scoreSolucionPrint(modelo, solucionGreedy.getModeloOrdenado(), "greedy")
+scoreSolucionPrint(modelo, solucionSearch.getModeloOrdenado(), "search")
+scoreSolucionPrint(modelo, solucionGreedyOptimizada.getModeloOrdenado(), "greedy optimizada")
+scoreSolucionPrint(modelo, solucionSearchOptimizada.getModeloOrdenado(), "search optimizada")
 
-f = open("entrega_primer_problema.txt", "w")
-f.write(solucionOptimizada.imprimirSolucion())
+f = open("solucion.txt", "w")
+f.write(solucionGreedyOptimizada.imprimirSolucion())
