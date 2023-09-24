@@ -155,19 +155,9 @@ class SolucionGreedy:
         saldo = 0
         sucursales = modelo.getSucursales()
 
-        sucursalActual = None
+        sucursalActual = Sucursal(0)
+        sucursalActual.setCoordenadas(0,0)
 
-        i = 0
-
-        while sucursalActual is None:
-            unaSucursal = sucursales[i]
-            if unaSucursal.getDemanda() > 0:
-                sucursalActual = unaSucursal
-            i = i + 1
-        
-        self.modeloOrdenado.append(sucursalActual.getNumero())
-        sucursales.remove(sucursalActual)
-        saldo = sucursalActual.getDemanda()
 
         while sucursales:
             distanciaMinima = None
