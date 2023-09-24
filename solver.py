@@ -407,7 +407,7 @@ f.close()
 # solucionTrivial = SolucionTrivial(modelo)
 solucionGreedy = SolucionGreedy(modelo)
 solucionSearch = SolucionSearch(modelo)
-solucionOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenado())
+solucionOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
 
 print(solucionOptimizada.getModeloOrdenado())
 
