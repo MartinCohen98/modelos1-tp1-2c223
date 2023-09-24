@@ -229,40 +229,19 @@ class SolucionSearch:
 
             for sucursal in sucursalesRecorrido:
                 
-                aumentoDistanciaMinima = None
-                sucursalAnterior = None
-                proximaSucursal = None
-                nuevaPocision = None
-                i = 0
+                nuevoModeloOrdenado = None
 
-                for numeroSucursal in self.modeloOrdenado:
-
-                    proximaSucursal = modelo.getSucursal(numeroSucursal)
-
-                    if i == 0:
-                        aumentoDistancia = distanciaSucursales(sucursal, proximaSucursal)
-                    else:
-                        aumentoDistancia = distanciaSucursales(sucursalAnterior, sucursal) + distanciaSucursales(sucursal, proximaSucursal)
-
-                    if (aumentoDistanciaMinima == None) or (aumentoDistancia < aumentoDistanciaMinima):
-
-                        if(self.esPosibleIncluir(modelo, i, sucursal)):
-                            aumentoDistanciaMinima = aumentoDistancia
-                            nuevaPocision = i
-
-                    sucursalAnterior = proximaSucursal
-                    i = i + 1
-
-                aumentoDistancia = distanciaSucursales(sucursalAnterior, sucursal)
-
-                if (aumentoDistanciaMinima == None) or (aumentoDistancia < aumentoDistanciaMinima):
+                for i in range(0, len(self.modeloOrdenado) + 1):
 
                     if(self.esPosibleIncluir(modelo, i, sucursal)):
-                        aumentoDistanciaMinima = aumentoDistancia
-                        nuevaPocision = i
+                        modeloConNuevoIncluido = self.modeloOrdenado.copy()
+                        modeloConNuevoIncluido.insert(i, sucursal.getNumero())
 
-                if nuevaPocision is not None:
-                    self.modeloOrdenado.insert(nuevaPocision, sucursal.getNumero())
+                        if(nuevoModeloOrdenado == None) or (scoreSolucion(modelo, nuevoModeloOrdenado) > scoreSolucion(modelo, modeloConNuevoIncluido)):
+                            nuevoModeloOrdenado = modeloConNuevoIncluido.copy()
+
+                if(nuevoModeloOrdenado):
+                    self.modeloOrdenado = nuevoModeloOrdenado.copy()
                     sucursales.remove(sucursal)
 
     def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal) -> bool:
@@ -319,7 +298,6 @@ class SolucionOptimizador():
 
         modeloRecorido = modeloOrdenado.copy()
         self.modeloOrdenado = modeloOrdenado.copy()
-        copiaModeloOrdenado = modeloOrdenado.copy()
 
         reordenamiento = True
 
@@ -329,49 +307,31 @@ class SolucionOptimizador():
 
             for numeroSucursalReordenando in modeloRecorido:
 
+                scoreOptimo = scoreSolucion(modelo, self.modeloOrdenado)
+                copiaModeloOrdenado = self.modeloOrdenado.copy()
                 copiaModeloOrdenado.remove(numeroSucursalReordenando)
                 sucursal = modelo.getSucursal(numeroSucursalReordenando)
-                aumentoDistanciaMinima = None
-                sucursalAnterior = None
-                proximaSucursal = None
-                nuevaPocision = None
-                i = 0
+                nuevoModeloOrdenado = None
 
-                for numeroSucursal in copiaModeloOrdenado:
+                for i in range(0, len(self.modeloOrdenado)):
 
-                    proximaSucursal = modelo.getSucursal(numeroSucursal)
-
-                    if i == 0:
-                        aumentoDistancia = distanciaSucursales(sucursal, proximaSucursal)
-                    else:
-                        aumentoDistancia = distanciaSucursales(sucursalAnterior, sucursal) + distanciaSucursales(sucursal, proximaSucursal)
-
-                    if (aumentoDistanciaMinima == None) or (aumentoDistancia < aumentoDistanciaMinima):
-
-                        if(self.esPosibleIncluir(modelo, i, sucursal, copiaModeloOrdenado)):
-                            aumentoDistanciaMinima = aumentoDistancia
-                            nuevaPocision = i
-
-                    sucursalAnterior = proximaSucursal
-                    i = i + 1
-
-                aumentoDistancia = distanciaSucursales(sucursalAnterior, sucursal)
-
-                if (aumentoDistanciaMinima == None) or (aumentoDistancia < aumentoDistanciaMinima):
+                    modeloConNuevoIncluido = copiaModeloOrdenado.copy()
 
                     if(self.esPosibleIncluir(modelo, i, sucursal, copiaModeloOrdenado)):
-                        aumentoDistanciaMinima = aumentoDistancia
-                        nuevaPocision = i
+                        modeloConNuevoIncluido.insert(i, sucursal.getNumero())
+                        if(scoreOptimo > scoreSolucion(modelo, modeloConNuevoIncluido)):
+                            nuevoModeloOrdenado = modeloConNuevoIncluido.copy()
+                            scoreOptimo = scoreSolucion(modelo, modeloConNuevoIncluido)
 
-                if nuevaPocision is not None:
-                    copiaModeloOrdenado.insert(nuevaPocision, sucursal.getNumero())
                 
-                    if(scoreSolucion(modelo, copiaModeloOrdenado) < scoreSolucion(modelo, self.modeloOrdenado)):
-                        self.modeloOrdenado = copiaModeloOrdenado.copy()
-                        print("Se reubica la sucursal " + str(sucursal.getNumero()))
-                        reordenamiento = True
+                
+                if(nuevoModeloOrdenado):
+                    self.modeloOrdenado = nuevoModeloOrdenado.copy()
+                    print("Se reubica la sucursal " + str(sucursal.getNumero()))
+                    reordenamiento = True
 
-                copiaModeloOrdenado = self.modeloOrdenado.copy()
+            modeloRecorido = self.modeloOrdenado.copy()
+
 
     def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal, orden: list[int]) -> bool:
         

@@ -26,4 +26,6 @@ Comentarios en entregas:
 
 - Intento de optimizar soluciones anteriores. Estoy teniendo puntajes mas altos que los anteriores asi que la logica debe tener algun error.
 
-- Arreglo de optimizador y comparador de soluciones para ver cual es la mejor. Voy a intentar mejorar la solucion search porque parece tener un problema
+- Arreglo de optimizador y comparador de soluciones para ver cual es la mejor. Voy a intentar mejorar la solucion search porque parece tener un problema.
+
+- Arreglada la logica de la solucion search, no parece haber mejorado mucho la solucion. Me doy cuenta que tome comos supuesto que es indistinto por donde comienzo el recorrido.
