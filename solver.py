@@ -1,4 +1,5 @@
 import math
+from datetime import datetime
 
 
 class Sucursal:
@@ -72,22 +73,26 @@ class Modelo:
 
 def scoreSolucion(modelo: Modelo, ordenado: list[int]) -> float:
     distancia = 0
-    sucursalAnterior = Sucursal(0)
-    sucursalAnterior.setCoordenadas(0,0)
+    sucursalOrigen = Sucursal(0)
+    sucursalOrigen.setCoordenadas(0,0)
+    sucursalAnterior = sucursalOrigen
 
     for numero in ordenado:
         sucursal = modelo.getSucursal(numero)
         distancia = distancia + distanciaSucursales(sucursal, sucursalAnterior)
 
         sucursalAnterior = sucursal
+
+    distancia = distancia + distanciaSucursales(sucursalAnterior, sucursalOrigen)
     
     return distancia
 
 def scoreSolucionPrint(modelo: Modelo, ordenado: list[int], nombre: str) -> float:
     saldo = 0
     distancia = 0
-    sucursalAnterior = Sucursal(0)
-    sucursalAnterior.setCoordenadas(0,0)
+    sucursalOrigen = Sucursal(0)
+    sucursalOrigen.setCoordenadas(0,0)
+    sucursalAnterior = sucursalOrigen
 
     for numero in ordenado:
         sucursal = modelo.getSucursal(numero)
@@ -98,6 +103,8 @@ def scoreSolucionPrint(modelo: Modelo, ordenado: list[int], nombre: str) -> floa
             print("Solucion " + nombre + " imposible.")
 
         sucursalAnterior = sucursal
+
+    distancia = distancia + distanciaSucursales(sucursalAnterior, sucursalOrigen)
 
     print("Score solcion " + nombre + ": " + str(distancia))
     
@@ -366,7 +373,7 @@ class SolucionOptimizador():
 
 
 
-f = open("primer_problema.txt", "r")
+f = open("segundo_problema.txt", "r")
 
 capacidad = int(f.readline().split(": ")[1])
 dimension = int(f.readline().split(": ")[1])
@@ -399,18 +406,22 @@ f.close()
 
 # solucionTrivial = SolucionTrivial(modelo)
 print("Resolviendo solucion greedy")
+t = datetime.now()
 solucionGreedy = SolucionGreedy(modelo)
-print("Resolviendo solucion search")
-solucionSearch = SolucionSearch(modelo)
-print("Optimizando solucion greedy")
-solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
-print("Optimizando solucion search")
-solucionSearchOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenado())
+elapsed_time = datetime.now() - t
+print(elapsed_time)
+#print("Resolviendo solucion search")
+#solucionSearch = SolucionSearch(modelo)
+#print("Optimizando solucion greedy")
+#solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+#print("Optimizando solucion search")
+#solucionSearchOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenado())
+
 
 scoreSolucionPrint(modelo, solucionGreedy.getModeloOrdenado(), "greedy")
-scoreSolucionPrint(modelo, solucionSearch.getModeloOrdenado(), "search")
-scoreSolucionPrint(modelo, solucionGreedyOptimizada.getModeloOrdenado(), "greedy optimizada")
-scoreSolucionPrint(modelo, solucionSearchOptimizada.getModeloOrdenado(), "search optimizada")
+#scoreSolucionPrint(modelo, solucionSearch.getModeloOrdenado(), "search")
+#scoreSolucionPrint(modelo, solucionGreedyOptimizada.getModeloOrdenado(), "greedy optimizada")
+#scoreSolucionPrint(modelo, solucionSearchOptimizada.getModeloOrdenado(), "search optimizada")
 
 f = open("solucion.txt", "w")
-f.write(solucionGreedyOptimizada.imprimirSolucion())
+f.write(solucionGreedy.imprimirSolucion())

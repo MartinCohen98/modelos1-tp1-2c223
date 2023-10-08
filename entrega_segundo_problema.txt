@@ -1,0 +1,19 @@
+Impresion del problema:
+
+Habiendo avanzado con la cursada ahora se que el problema a resolver es un problema del viajante. Es probable que pueda reutilizar mucho del codigo que use para la primera entrega asi que deberia representar mucha menos programacion.
+
+
+
+Ideas de como lo voy a resolver:
+
+Sabiendo que es un problema del viajante ahora entiendo algunos supuestos que tome que son incorrectos (o pueden serlos). En principio voy a corregir el modelo para representar eso. Esta es la razon por la que la distancia siempre me daba distinto en mi ejecucion que en la entrega en la pagina. Lo primero que voy a hacer para esto es cerrar el circuito, ya que esta es una propiedad de los problemas del viajante. Luego voy a probar si es correcto asumir que se comienza desde el origen o no haciendo una entrega para corroborar.
+
+Al ahora tratarse de un problema con muchas mas paradas es posible que deba optimizar un poco el codigo para performance para lograr una ejecucion en un tiempo razonable. Lo que es más probable que tenga que hacer es limitar la cantidad de veces que el optimizador itera por las paradas buscando una mejor solucion. Otra cosa que probablemente haga para optimizar el tiempo de ejecucion es correr solo la heuristica que me interesa correr comentando el resto.
+
+Tambien voy a agregar alguna heuristica extra si se me ocurre alguna.
+
+
+
+Comentarios en entregas:
+
+- La primera entrega va a ser de prueba con el codigo de la entrega anterior. La corrida esta tardando mucho pero no se cuanto, voy a agregar timestamps y logs para la proxima entrega. Corte la primera ejecucion para agregarlos. Solo voy a correr la solucion greedy sin optimizar para la primera entrega y para agregar los logs.
