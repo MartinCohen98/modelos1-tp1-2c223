@@ -291,12 +291,11 @@ class SolucionOptimizador():
 
         modeloRecorido = modeloOrdenado.copy()
         self.modeloOrdenado = modeloOrdenado.copy()
+        iteraciones = 0
 
-        reordenamiento = True
+        while iteraciones < 5:
 
-        while reordenamiento:
-
-            reordenamiento = False
+            paradasRecorridas = 0
 
             for numeroSucursalReordenando in modeloRecorido:
 
@@ -320,9 +319,14 @@ class SolucionOptimizador():
                 
                 if(nuevoModeloOrdenado):
                     self.modeloOrdenado = nuevoModeloOrdenado.copy()
-                    reordenamiento = True
+
+                paradasRecorridas = paradasRecorridas + 1
+                print("Recorridas: " + str(paradasRecorridas))
 
             modeloRecorido = self.modeloOrdenado.copy()
+
+            iteraciones = iteraciones + 1
+            print("Iteracion numero: " + str(iteraciones))
 
 
     def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal, orden: list[int]) -> bool:
@@ -405,15 +409,22 @@ for i in range(0, dimension):
 f.close()
 
 # solucionTrivial = SolucionTrivial(modelo)
+
 print("Resolviendo solucion greedy")
 t = datetime.now()
 solucionGreedy = SolucionGreedy(modelo)
 elapsed_time = datetime.now() - t
-print(elapsed_time)
+print(f"Solcuion greedy tardo: {elapsed_time}")
+
 #print("Resolviendo solucion search")
 #solucionSearch = SolucionSearch(modelo)
-#print("Optimizando solucion greedy")
-#solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+
+print("Optimizando solucion greedy")
+t = datetime.now()
+solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+elapsed_time = datetime.now() - t
+print(f"Optimizacion de solcuion greedy tardo: {elapsed_time}")
+
 #print("Optimizando solucion search")
 #solucionSearchOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenado())
 
