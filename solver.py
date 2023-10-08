@@ -73,8 +73,9 @@ class Modelo:
 
 def scoreSolucion(modelo: Modelo, ordenado: list[int]) -> float:
     distancia = 0
-    sucursalOrigen = Sucursal(0)
-    sucursalOrigen.setCoordenadas(0,0)
+    if not ordenado:
+        return distancia
+    sucursalOrigen = modelo.getSucursal(ordenado[0])
     sucursalAnterior = sucursalOrigen
 
     for numero in ordenado:
@@ -90,8 +91,9 @@ def scoreSolucion(modelo: Modelo, ordenado: list[int]) -> float:
 def scoreSolucionPrint(modelo: Modelo, ordenado: list[int], nombre: str) -> float:
     saldo = 0
     distancia = 0
-    sucursalOrigen = Sucursal(0)
-    sucursalOrigen.setCoordenadas(0,0)
+    if not ordenado:
+        return distancia
+    sucursalOrigen = modelo.getSucursal(ordenado[0])
     sucursalAnterior = sucursalOrigen
 
     for numero in ordenado:
@@ -419,11 +421,11 @@ print(f"Solcuion greedy tardo: {elapsed_time}")
 #print("Resolviendo solucion search")
 #solucionSearch = SolucionSearch(modelo)
 
-print("Optimizando solucion greedy")
-t = datetime.now()
-solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
-elapsed_time = datetime.now() - t
-print(f"Optimizacion de solcuion greedy tardo: {elapsed_time}")
+#print("Optimizando solucion greedy")
+#t = datetime.now()
+#solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+#elapsed_time = datetime.now() - t
+#print(f"Optimizacion de solcuion greedy tardo: {elapsed_time}")
 
 #print("Optimizando solucion search")
 #solucionSearchOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenado())
