@@ -449,13 +449,15 @@ class SolucionNuevoOptimizador():
 
                 modeloConNuevoIncluido = copiaModeloOrdenado.copy()
 
-                if(self.esPosibleIncluir(modelo, i, sucursal, copiaModeloOrdenado)):
+                if(distanciaSucursales(modelo.getSucursal(self.modeloOrdenado[i]), sucursal) < 500):
+
                     modeloConNuevoIncluido.insert(i, sucursal.getNumero())
                     scoreNuevo = scoreSolucion(modelo, modeloConNuevoIncluido)
                     if(scoreOptimo > scoreNuevo):
-                        nuevoModeloOrdenado = modeloConNuevoIncluido.copy()
-                        print("Nuevo optimo encontrado, se restaron " + str(scoreOptimo - scoreNuevo) + " puntos")
-                        scoreOptimo = scoreNuevo
+                        if(self.esPosibleIncluir(modelo, i, sucursal, copiaModeloOrdenado)):
+                            nuevoModeloOrdenado = modeloConNuevoIncluido.copy()
+                            print("Nuevo optimo encontrado, se restaron " + str(scoreOptimo - scoreNuevo) + " puntos")
+                            scoreOptimo = scoreNuevo
             
             
             if(nuevoModeloOrdenado):
@@ -581,4 +583,4 @@ scoreSolucionPrint(modelo, solucionGreedy.getModeloOrdenado(), "greedy")
 scoreSolucionPrint(modelo, solucionGreedyOptimizadaNew.getModeloOrdenado(), "greedy optimizada")
 
 f = open("solucion.txt", "w")
-f.write(solucionGreedy.imprimirSolucion())
+f.write(solucionGreedyOptimizadaNew.imprimirSolucion())
