@@ -39,7 +39,6 @@ def distanciaSucursales(sucursal1: Sucursal, sucursal2: Sucursal):
 class Modelo:
 
     sucursales = {}
-    sucursales: dict[int, Sucursal]
     capacidadMaxima = 0
 
     def __init__(self, capacidad) -> None:
@@ -63,7 +62,7 @@ class Modelo:
     def getSucursal(self, numero) -> Sucursal:
         return self.sucursales[numero]
     
-    def getSucursales(self) -> list[Sucursal]:
+    def getSucursales(self):
         return list(self.sucursales.values())
 
     def printSucursal(self, numero):
@@ -71,7 +70,7 @@ class Modelo:
         print(str(numero) + ": Demanda: " + str(sucursal.getDemanda()) + " Coordinadas: " + str(sucursal.getX()) + ", " + str(sucursal.getY()))
 
 
-def scoreSolucion(modelo: Modelo, ordenado: list[int]) -> float:
+def scoreSolucion(modelo: Modelo, ordenado) -> float:
     distancia = 0
     if not ordenado:
         return distancia
@@ -88,7 +87,7 @@ def scoreSolucion(modelo: Modelo, ordenado: list[int]) -> float:
     
     return distancia
 
-def scoreSolucionPrint(modelo: Modelo, ordenado: list[int], nombre: str) -> float:
+def scoreSolucionPrint(modelo: Modelo, ordenado, nombre) -> float:
     saldo = 0
     distancia = 0
     if not ordenado:
@@ -118,7 +117,7 @@ def distanciaQueAgrega(sucursal: Sucursal, sucursalAnterior: Sucursal, sucursalP
     distanciaAgregada = distanciaConAnterior - distanciaSinAnterior
     return distanciaAgregada
 
-def topSucursalAumentaScore(modelo: Modelo, ordenado: list[int], sucursalesIgnorar: list[int]) -> int:
+def topSucursalAumentaScore(modelo: Modelo, ordenado, sucursalesIgnorar) -> int:
     if not ordenado:
         return None
     if not sucursalesIgnorar:
@@ -180,7 +179,7 @@ class SolucionTrivial:
             
             self.modeloOrdenado.append(sucursal.getNumero())
 
-    def getModeloOrdenado(self) -> list[int]:
+    def getModeloOrdenado(self):
         return self.modeloOrdenado
     
     def imprimirSolucion(self) -> str:
@@ -195,6 +194,39 @@ class SolucionTrivial:
         
 
         return texto[:-1]
+    
+
+
+class SolucionCache:
+
+    modeloOrdenado = []
+
+    def __init__(self, archivo: str):
+
+        f = open(archivo, "r")
+        solucion = f.readline().split(" ")
+        for numeroString in solucion:
+            self.modeloOrdenado.append(int(numeroString))
+
+
+
+    def getModeloOrdenado(self):
+        return self.modeloOrdenado
+    
+    def imprimirSolucion(self) -> str:
+
+        texto = ""
+
+        if not self.modeloOrdenado:
+            return texto
+        
+        for numero in self.modeloOrdenado:
+            texto = texto + str(numero) + ' '
+        
+
+        return texto[:-1]
+
+
     
 
 class SolucionGreedy:
@@ -227,7 +259,7 @@ class SolucionGreedy:
             sucursalActual = proximaSucursal
             saldo = saldo + sucursalActual.getDemanda()
 
-    def getModeloOrdenado(self) -> list[int]:
+    def getModeloOrdenado(self):
         return self.modeloOrdenado
     
     def imprimirSolucion(self) -> str:
@@ -314,7 +346,7 @@ class SolucionSearch:
         return esPosible
 
 
-    def getModeloOrdenado(self) -> list[int]:
+    def getModeloOrdenado(self):
         return self.modeloOrdenado
     
     def imprimirSolucion(self) -> str:
@@ -335,7 +367,7 @@ class SolucionOptimizador():
 
     modeloOrdenado = []
 
-    def __init__(self, modelo: Modelo, modeloOrdenado: list[int]) -> None:
+    def __init__(self, modelo: Modelo, modeloOrdenado) -> None:
 
         modeloRecorido = modeloOrdenado.copy()
         self.modeloOrdenado = modeloOrdenado.copy()
@@ -379,7 +411,7 @@ class SolucionOptimizador():
             print("Iteracion numero: " + str(iteraciones))
 
 
-    def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal, orden: list[int]) -> bool:
+    def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal, orden) -> bool:
         
         i = 0
         saldo = 0
@@ -408,7 +440,7 @@ class SolucionOptimizador():
         return esPosible
 
 
-    def getModeloOrdenado(self) -> list[int]:
+    def getModeloOrdenado(self):
         return self.modeloOrdenado
     
     def imprimirSolucion(self) -> str:
@@ -429,7 +461,7 @@ class SolucionNuevoOptimizador():
 
     modeloOrdenado = []
 
-    def __init__(self, modelo: Modelo, modeloOrdenado: list[int]) -> None:
+    def __init__(self, modelo: Modelo, modeloOrdenado) -> None:
 
         self.modeloOrdenado = modeloOrdenado.copy()
         iteraciones = 0
@@ -470,7 +502,7 @@ class SolucionNuevoOptimizador():
             print("Iteracion numero: " + str(iteraciones))
 
 
-    def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal, orden: list[int]) -> bool:
+    def esPosibleIncluir(self, modelo: Modelo, posicion: int, sucursalPorUbicar: Sucursal, orden) -> bool:
         
         i = 0
         saldo = 0
@@ -499,7 +531,7 @@ class SolucionNuevoOptimizador():
         return esPosible
 
 
-    def getModeloOrdenado(self) -> list[int]:
+    def getModeloOrdenado(self):
         return self.modeloOrdenado
     
     def imprimirSolucion(self) -> str:
@@ -551,11 +583,11 @@ f.close()
 
 # solucionTrivial = SolucionTrivial(modelo)
 
-print("Resolviendo solucion greedy")
-t = datetime.now()
-solucionGreedy = SolucionGreedy(modelo)
-elapsed_time = datetime.now() - t
-print(f"Solcuion greedy tardo: {elapsed_time}")
+#print("Resolviendo solucion greedy")
+#t = datetime.now()
+#solucionGreedy = SolucionGreedy(modelo)
+#elapsed_time = datetime.now() - t
+#print(f"Solcuion greedy tardo: {elapsed_time}")
 
 #print("Resolviendo solucion search")
 #solucionSearch = SolucionSearch(modelo)
@@ -569,18 +601,24 @@ print(f"Solcuion greedy tardo: {elapsed_time}")
 #print("Optimizando solucion search")
 #solucionSearchOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenado())
 
-print("Optimizando solucion greedy con nuevo optimizador")
+#print("Optimizando solucion greedy con nuevo optimizador")
+#t = datetime.now()
+#solucionGreedyOptimizadaNew = SolucionNuevoOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+#elapsed_time = datetime.now() - t
+#print(f"Optimizacion de solcuion greedy tardo: {elapsed_time}")
+
+print("Abriendo cache de solucion")
 t = datetime.now()
-solucionGreedyOptimizadaNew = SolucionNuevoOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+solucionCache = SolucionCache("solucionCache.txt")
 elapsed_time = datetime.now() - t
-print(f"Optimizacion de solcuion greedy tardo: {elapsed_time}")
+print(f"Abrir solucion cache tardo: {elapsed_time}")
 
 
-scoreSolucionPrint(modelo, solucionGreedy.getModeloOrdenado(), "greedy")
+#scoreSolucionPrint(modelo, solucionGreedy.getModeloOrdenado(), "greedy")
 #scoreSolucionPrint(modelo, solucionSearch.getModeloOrdenado(), "search")
 #scoreSolucionPrint(modelo, solucionGreedyOptimizada.getModeloOrdenado(), "greedy optimizada")
 #scoreSolucionPrint(modelo, solucionSearchOptimizada.getModeloOrdenado(), "search optimizada")
-scoreSolucionPrint(modelo, solucionGreedyOptimizadaNew.getModeloOrdenado(), "greedy optimizada")
+#scoreSolucionPrint(modelo, solucionGreedyOptimizadaNew.getModeloOrdenado(), "greedy optimizada")
 
 f = open("solucion.txt", "w")
-f.write(solucionGreedyOptimizadaNew.imprimirSolucion())
+f.write(solucionCache.imprimirSolucion())
