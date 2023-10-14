@@ -583,11 +583,17 @@ f.close()
 
 # solucionTrivial = SolucionTrivial(modelo)
 
-#print("Resolviendo solucion greedy")
+#print("Abriendo cache de solucion")
 #t = datetime.now()
-#solucionGreedy = SolucionGreedy(modelo)
+#solucionCache = SolucionCache("solucionCache.txt")
 #elapsed_time = datetime.now() - t
-#print(f"Solcuion greedy tardo: {elapsed_time}")
+#print(f"Abrir solucion cache tardo: {elapsed_time}")
+
+print("Resolviendo solucion greedy")
+t = datetime.now()
+solucionGreedy = SolucionGreedy(modelo)
+elapsed_time = datetime.now() - t
+print(f"Solcuion greedy tardo: {elapsed_time}")
 
 #print("Resolviendo solucion search")
 #solucionSearch = SolucionSearch(modelo)
@@ -607,12 +613,6 @@ f.close()
 #elapsed_time = datetime.now() - t
 #print(f"Optimizacion de solcuion greedy tardo: {elapsed_time}")
 
-print("Abriendo cache de solucion")
-t = datetime.now()
-solucionCache = SolucionCache("solucionCache.txt")
-elapsed_time = datetime.now() - t
-print(f"Abrir solucion cache tardo: {elapsed_time}")
-
 
 #scoreSolucionPrint(modelo, solucionGreedy.getModeloOrdenado(), "greedy")
 #scoreSolucionPrint(modelo, solucionSearch.getModeloOrdenado(), "search")
@@ -620,5 +620,5 @@ print(f"Abrir solucion cache tardo: {elapsed_time}")
 #scoreSolucionPrint(modelo, solucionSearchOptimizada.getModeloOrdenado(), "search optimizada")
 #scoreSolucionPrint(modelo, solucionGreedyOptimizadaNew.getModeloOrdenado(), "greedy optimizada")
 
-f = open("solucion.txt", "w")
-f.write(solucionCache.imprimirSolucion())
+f = open("solucionCache.txt", "w")
+f.write(solucionGreedy.imprimirSolucion())
