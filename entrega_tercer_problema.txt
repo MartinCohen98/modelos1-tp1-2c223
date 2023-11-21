@@ -1,0 +1,51 @@
+Hacer un informe explicando como funciona la eliminación de subtours en cada modelo, ventajas y desventajas de ambos, comparación de tiempos de corrida
+Notar que el modelo MTZ tiene todas las variables Xij mientras que el otro tiene un "ordered" por lo tanto solo tiene Xij cuando i < j, ¿por que es posible esto?, ¿cuando no es posible?, ¿que beneficios tiene?
+Para el modelo MTZ incluir el gráfico de la solapa "Statistics", usar los primeros 100 seg (a los 120seg comienza a hacer scroll y se pierde el comienzo), explicarlo
+
+Un poco más de detalle: Comparar los modelos, uno es MTZ y el otro de eliminación de subtours, el primero lo conocen, el segundo agarra un subtour, agrega una restricción para eliminarlo y vuelve a correr hasta que no haya, la idea es comparar esos dos modelos
+
+
+------------------------------------------------------------------
+
+
+Como funciona la eliminación de subtours:
+
+* Para el MTZ se crea una variable entera y restricciones para determinar el orden en el que se visitan las ciudades. El valor de las variables Ui indican el orden de la ciudad i en el recorrido de la solucion.
+* Para la otra implementacion de eliminacion de subtours simplemente se deja correr el modelo con subtours y una vez encontrada una solucion se agrega una restriccion que no lo permite para cada subtour en la solucion. De esta manera iterativamente se van generando nuevas soluciones con distintos subtours, hasta que eventualmente se llega a una solucion sin subtours. Una vez llegado a este punto tenemos nuesta solucion.
+
+
+
+
+Ventajas del MTZ: 
+* Se crean soluciones aproximadas en poco tiempo de ejecución.
+* Es simple agregar restricciones al orden de las ciudades visitadas. Esto agrega mucha flexibilidad para modelar problemas más complejos.
+
+Desventajas:
+* Para un problema relativamente chico como este se tarda mucho tiempo en llegar a una solución optima.
+
+
+Ventajas de eliminacion de subtours:
+* Tiene menor tiempo para llegar a un optimo que el MTZ (por lo menos para problemas de al rededor de 100 ciudades).
+
+Desventajas:
+* No se obtiene una solución valida hasta que se llega al optimo.
+
+
+
+
+Comparación de tiempo de corrida:
+
+* En total MTZ tarda 352.25 segundos en llegar al optimo. Sin embargo a los 5 segundos se llega a una solucion aproximada como maximo un 25%. En 30 segundos ya se llega a una aproximacion de menos de 10%.
+
+* En total eliminacion de subtours tarda 21.71 segundos. Pero la primera solución valida se llega recien al final.
+
+
+
+
+La razon por la que el modelo MTZ debe tener ambas variables es porque el modelo da un orden en el cual se visitan las ciudades. Es decir que si la variable X[i,j] vale 1 en la solución y la variable X[j,i] vale 0 esto significa que se pasa por la ciudad i justo antes de la ciudad j. Las variables Ui y Uj podrian valer por ejemplo Ui = 4 y Uj = 5. Si se da lo opuesto (es decir, con X[j,i] = 1 y X[i,j] = 0) Uj podria valer 4 y por ende Ui 5.
+
+Como el modelo de eliminación de subtours no da orden, solo recorrido, basta con una sola bivalente para definir que en el recorrido se conectan esas 2 ciudades.
+
+Esto se cumple siempre y cuando los pesos de los caminos entre ciudades sea igual yendo de i a j, y de j a i. En terminos de grafos, para un grafo dirigido es necesario si o si tener ambas bivalentes (y por ende definir un sentido o orden al recorrido), y no es necesario para un grafico no dirigido. Sin embargo esta definicion de orden tiene sentido, evidentemente, para grafos no dirigidos ya que el modelo que resolvemos en este trabajo se puede modelar como un grafo no dirigido al que medimos los pesos como la distancia entre dos puntos.
+
+El tener menos bivalentes es bueno por el lado de que resolver el modelo probablemente sea más rapido que si tenemos el doble de variables bivalentes. Por otro lado el tener definido el orden permite hacer restricciones sobre, por ejemplo, visitar una ciudad antes que otra. Tambien nos permite dar pesos distintos al camino de ida y de vuelta entre una ciudad y otra. Esto nos permite modelar problemas más complejos.
