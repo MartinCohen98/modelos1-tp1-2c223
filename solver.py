@@ -88,7 +88,7 @@ def scoreSolucion(modelo: Modelo, ordenado) -> float:
     return distancia
 
 def scoreSolucionPrint(modelo: Modelo, ordenado, nombre) -> float:
-    saldo = 0
+#    saldo = 0
     distancia = 0
     if not ordenado:
         return distancia
@@ -97,11 +97,11 @@ def scoreSolucionPrint(modelo: Modelo, ordenado, nombre) -> float:
 
     for numero in ordenado:
         sucursal = modelo.getSucursal(numero)
-        saldo = saldo + sucursal.getDemanda()
+#        saldo = saldo + sucursal.getDemanda()
         distancia = distancia + distanciaSucursales(sucursal, sucursalAnterior)
 
-        if(saldo < 0) or saldo > modelo.getCapacidadMaxima():
-            print("Solucion " + nombre + " imposible.")
+#        if(saldo < 0) or saldo > modelo.getCapacidadMaxima():
+#            print("Solucion " + nombre + " imposible.")
 
         sucursalAnterior = sucursal
 
@@ -185,16 +185,16 @@ class SolucionTrivial:
 
     def __init__(self, modelo: Modelo) -> None:
         
-        saldo = 0
+#        saldo = 0
 
         for i in range(0, modelo.getCantidadSucursales()):
             sucursal = modelo.getSucursal(i + 1)
 
-            saldo = saldo + sucursal.getDemanda()
+#            saldo = saldo + sucursal.getDemanda()
 
-            if(saldo < 0) or saldo > modelo.getCapacidadMaxima():
-                print("Solucion trivial imposible.")
-                return
+#            if(saldo < 0) or saldo > modelo.getCapacidadMaxima():
+#                print("Solucion trivial imposible.")
+#                return
             
             self.modeloOrdenado.append(sucursal.getNumero())
 
@@ -254,7 +254,7 @@ class SolucionGreedy:
 
     def __init__(self, modelo: Modelo) -> None:
         
-        saldo = 0
+#        saldo = 0
         sucursales = modelo.getSucursales()
 
         sucursalActual = Sucursal(0)
@@ -266,17 +266,17 @@ class SolucionGreedy:
             proximaSucursal = None
             for sucursal in sucursales:
                 distancia = distanciaSucursales(sucursalActual, sucursal)
-                nuevoSaldo = saldo + sucursal.getDemanda()
+#                nuevoSaldo = saldo + sucursal.getDemanda()
 
-                if((nuevoSaldo >= 0) and (nuevoSaldo <= modelo.getCapacidadMaxima()) and
-                   ((distanciaMinima is None) or (distanciaMinima > distancia))):
+ #               if((nuevoSaldo >= 0) and (nuevoSaldo <= modelo.getCapacidadMaxima()) and
+                if ((distanciaMinima is None) or (distanciaMinima > distancia)):
                     distanciaMinima = distancia
                     proximaSucursal = sucursal
             
             self.modeloOrdenado.append(proximaSucursal.getNumero())
             sucursales.remove(proximaSucursal)
             sucursalActual = proximaSucursal
-            saldo = saldo + sucursalActual.getDemanda()
+#            saldo = saldo + sucursalActual.getDemanda()
 
     def getModeloOrdenado(self):
         return self.modeloOrdenado
@@ -391,9 +391,11 @@ class SolucionOptimizador():
         modeloRecorido = modeloOrdenado.copy()
         self.modeloOrdenado = modeloOrdenado.copy()
         iteraciones = 0
+        hayCambios = True
 
-        while iteraciones < 1:
+        while hayCambios:
 
+            hayCambios = False
             paradasRecorridas = 0
 
             for numeroSucursalReordenando in modeloRecorido:
@@ -408,17 +410,18 @@ class SolucionOptimizador():
 
                     modeloConNuevoIncluido = copiaModeloOrdenado.copy()
 
-                    if(self.esPosibleIncluir(modelo, i, sucursal, copiaModeloOrdenado)):
-                        modeloConNuevoIncluido.insert(i, sucursal.getNumero())
-                        scoreNuevo = scoreSolucion(modelo, modeloConNuevoIncluido)
-                        if(scoreOptimo > scoreNuevo):
-                            nuevoModeloOrdenado = modeloConNuevoIncluido.copy()
-                            print("Nuevo optimo encontrado, se restaron " + str(scoreOptimo - scoreNuevo) + " puntos")
-                            scoreOptimo = scoreNuevo
+#                    if(self.esPosibleIncluir(modelo, i, sucursal, copiaModeloOrdenado)):
+                    modeloConNuevoIncluido.insert(i, sucursal.getNumero())
+                    scoreNuevo = scoreSolucion(modelo, modeloConNuevoIncluido)
+                    if(scoreOptimo > scoreNuevo):
+                        nuevoModeloOrdenado = modeloConNuevoIncluido.copy()
+                        print("Nuevo optimo encontrado, se restaron " + str(scoreOptimo - scoreNuevo) + " puntos")
+                        scoreOptimo = scoreNuevo
 
                 
                 
                 if(nuevoModeloOrdenado):
+                    hayCambios = True
                     self.modeloOrdenado = nuevoModeloOrdenado.copy()
 
                 paradasRecorridas = paradasRecorridas + 1
@@ -661,7 +664,7 @@ class SolucionOptimizadorSubtours:
 
 
 
-f = open("segundo_problema.txt", "r")
+f = open("tercer_problema.txt", "r")
 
 capacidad = int(f.readline().split(": ")[1])
 dimension = int(f.readline().split(": ")[1])
@@ -670,12 +673,12 @@ modelo = Modelo(capacidad)
 
 # DEMANDAS
 f.readline()
-
+#
 for i in range(0, dimension):
-    demanda = f.readline().split(' ')
-    modelo.agregarSucursal(int(demanda[0]))
-    modelo.agregarDemandaSucursal(int(demanda[0]), int(demanda[1]))
-
+#    demanda = f.readline().split(' ')
+    modelo.agregarSucursal(int(i + 1))
+#    modelo.agregarDemandaSucursal(int(demanda[0]), int(demanda[1]))
+#
 # FIN DEMANDAS
 f.readline()
 
@@ -692,28 +695,28 @@ for i in range(0, dimension):
 
 f.close()
 
-solucionTrivial = SolucionTrivial(modelo)
-
-print("Abriendo cache de solucion")
-t = datetime.now()
-solucionCache = SolucionCache("solucionCache.txt")
-elapsed_time = datetime.now() - t
-print(f"Abrir solucion cache tardo: {elapsed_time}")
-
-#print("Resolviendo solucion greedy")
+#solucionTrivial = SolucionTrivial(modelo)
+#
+#print("Abriendo cache de solucion")
 #t = datetime.now()
-#solucionGreedy = SolucionGreedy(modelo)
+#solucionCache = SolucionCache("solucionCache.txt")
 #elapsed_time = datetime.now() - t
-#print(f"Solcuion greedy tardo: {elapsed_time}")
+#print(f"Abrir solucion cache tardo: {elapsed_time}")
+
+print("Resolviendo solucion greedy")
+t = datetime.now()
+solucionGreedy = SolucionGreedy(modelo)
+elapsed_time = datetime.now() - t
+print(f"Solcuion greedy tardo: {elapsed_time}")
 
 #print("Resolviendo solucion search")
 #solucionSearch = SolucionSearch(modelo)
 
-#print("Optimizando solucion greedy")
-#t = datetime.now()
-#solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
-#elapsed_time = datetime.now() - t
-#print(f"Optimizacion de solcuion greedy tardo: {elapsed_time}")
+print("Optimizando solucion greedy")
+t = datetime.now()
+solucionGreedyOptimizada = SolucionOptimizador(modelo, solucionGreedy.getModeloOrdenado())
+elapsed_time = datetime.now() - t
+print(f"Optimizacion de solcuion greedy tardo: {elapsed_time}")
 
 #print("Optimizando solucion search")
 #solucionSearchOptimizada = SolucionOptimizador(modelo, solucionSearch.getModeloOrdenado())
@@ -725,15 +728,15 @@ print(f"Abrir solucion cache tardo: {elapsed_time}")
 #print(f"Optimizacion de solcuion greedy tardo: {elapsed_time}")
 
 
-scoreSolucionPrint(modelo, solucionCache.getModeloOrdenado(), "solucion cache")
+#scoreSolucionPrint(modelo, solucionCache.getModeloOrdenado(), "solucion cache")
 #scoreSolucionPrint(modelo, solucionCache.getModeloOrdenado(), "solucion cache opti")
-#scoreSolucionPrint(modelo, solucionGreedy.getModeloOrdenado(), "greedy")
+scoreSolucionPrint(modelo, solucionGreedy.getModeloOrdenado(), "greedy")
 #scoreSolucionPrint(modelo, solucionSearch.getModeloOrdenado(), "search")
-#scoreSolucionPrint(modelo, solucionGreedyOptimizada.getModeloOrdenado(), "greedy optimizada")
+scoreSolucionPrint(modelo, solucionGreedyOptimizada.getModeloOrdenado(), "greedy optimizada")
 #scoreSolucionPrint(modelo, solucionSearchOptimizada.getModeloOrdenado(), "search optimizada")
 #scoreSolucionPrint(modelo, solucionGreedyOptimizadaNew.getModeloOrdenado(), "greedy optimizada")
 
-distanciaMaxima(modelo, solucionCache.getModeloOrdenado())
+#distanciaMaxima(modelo, solucionCache.getModeloOrdenado())
 
 f = open("solucion.txt", "w")
-f.write(solucionCache.imprimirSolucion())
+f.write(solucionGreedyOptimizada.imprimirSolucion())

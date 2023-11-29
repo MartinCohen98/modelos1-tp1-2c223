@@ -22,7 +22,7 @@ float c[edges];
 location cityLocation[cities] = ...;
 
 //Solucion inicial
-//int values[e in edges] = ((e.j==e.i+1) || (e.j==1 && e.i==n)) ? 1 : 0;
+int values[e in edges] = ((e.j==e.i+1) || (e.j==1 && e.i==n)) ? 1 : 0;
 
 execute {
   function getDistance(city1, city2) {
@@ -65,7 +65,7 @@ main {
   var opl = new IloOplModel(mod, cplex1);
   opl.addDataSource(dat);
   opl.generate();
-  //cplex1.addMIPStart(opl.x,opl.values);
+  cplex1.addMIPStart(opl.x,opl.values);
 
   if (cplex1.solve()) {
     writeln("solution: ", cplex1.getObjValue(), " /size: ", dat.n, " /time: ",

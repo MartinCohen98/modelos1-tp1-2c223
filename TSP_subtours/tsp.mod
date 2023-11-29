@@ -38,7 +38,7 @@ tuple location {
 location cityLocation[Cities] = ...;
 
 //Solucion inicial
-//int values[e in Edges] = ((e.j==e.i+1) || (e.i==1 && e.j==n)) ? 1 : 0;
+int values[e in Edges] = ((e.j==e.i+1) || (e.i==1 && e.j==n)) ? 1 : 0;
 
 execute {
   function getDistance(city1, city2) {
@@ -145,7 +145,7 @@ main {
     opl.generate();
     it++;
 
-    //cplex1.addMIPStart(opl.x,opl.values);
+    cplex1.addMIPStart(opl.x,opl.values);
     writeln("Iteration ", it, " with ", opl.subtours.size, " subtours.");
     if (!cplex1.solve()) {
       writeln("ERROR: could not solve");

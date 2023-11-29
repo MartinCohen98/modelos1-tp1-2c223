@@ -49,3 +49,15 @@ Como el modelo de eliminación de subtours no da orden, solo recorrido, basta co
 Esto se cumple siempre y cuando los pesos de los caminos entre ciudades sea igual yendo de i a j, y de j a i. En terminos de grafos, para un grafo dirigido es necesario si o si tener ambas bivalentes (y por ende definir un sentido o orden al recorrido), y no es necesario para un grafico no dirigido. Sin embargo esta definicion de orden tiene sentido, evidentemente, para grafos no dirigidos ya que el modelo que resolvemos en este trabajo se puede modelar como un grafo no dirigido al que medimos los pesos como la distancia entre dos puntos.
 
 El tener menos bivalentes es bueno por el lado de que resolver el modelo probablemente sea más rapido que si tenemos el doble de variables bivalentes. Por otro lado el tener definido el orden permite hacer restricciones sobre, por ejemplo, visitar una ciudad antes que otra. Tambien nos permite dar pesos distintos al camino de ida y de vuelta entre una ciudad y otra. Esto nos permite modelar problemas más complejos.
+
+
+
+
+Al agregar la solución inicial, la solucion de eliminación de subtours no cambia nada ya que se corre siempre el modelo desde 0 con restricciones agregadas para los subtours que se forman.
+
+La solución MTZ sin embargo tiene una gran diferencia. Como se ve en la imagen graficoConInicial, se comienza con una solución muy mala (esta es la solución inicial) y rapidamente se normaliza a lo que se ve en el otro grafico, o por lo menos algo parecido. No se puede apreciar con mucho detalle ya que la solucion inicial es exponencialmente peor la optima, achatando el resto de las mejoras que se ven en el grafico luego de la primera. Una observación es que en la corrida con solución inicial se pueden ver mejoras en el resultado por "baches", es decir que sucede que de a momentos se generan muchas mejoras en poco tiempo.
+
+
+
+
+Como entrega inicial modifico el modelo inicial para ignorar las capacidades y realizo la entrega inicial.
