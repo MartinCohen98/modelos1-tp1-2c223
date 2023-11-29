@@ -66,4 +66,4 @@ Como entrega inicial modifico el modelo inicial para ignorar las capacidades y r
 
 Con mi heuristica recibí un score 5,967.99.
 
-Realizo la entrega final con la solución del algoritmo MTZ.
+Realizo la entrega final con la solución del algoritmo MTZ, me confundi varias veces antes deagregar el correcto.
