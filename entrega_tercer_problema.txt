@@ -57,7 +57,13 @@ Al agregar la solución inicial, la solucion de eliminación de subtours no camb
 
 La solución MTZ sin embargo tiene una gran diferencia. Como se ve en la imagen graficoConInicial, se comienza con una solución muy mala (esta es la solución inicial) y rapidamente se normaliza a lo que se ve en el otro grafico, o por lo menos algo parecido. No se puede apreciar con mucho detalle ya que la solucion inicial es exponencialmente peor la optima, achatando el resto de las mejoras que se ven en el grafico luego de la primera. Una observación es que en la corrida con solución inicial se pueden ver mejoras en el resultado por "baches", es decir que sucede que de a momentos se generan muchas mejoras en poco tiempo.
 
+Destaco que luego de agregar la solución inicial la solución MTZ mejoró de 352.25 segundos a 153.28 segundos.
+
 
 
 
 Como entrega inicial modifico el modelo inicial para ignorar las capacidades y realizo la entrega inicial.
+
+Con mi heuristica recibí un score 5,967.99.
+
+Realizo la entrega final con la solución del algoritmo MTZ.
